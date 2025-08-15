@@ -1,3 +1,4 @@
+import pickle
 import pandas as pd
 from pathlib import Path
 from collections import defaultdict
@@ -86,14 +87,14 @@ def search_best_params(data_path='data', data_type = 'train'):
     best_params.to_csv('data/metrics/best_params.csv')
     return best_params
     
-def train(data_path='data', data_type = 'train', save_model_as='models/saved_models/xgboost_model.json'):
+def train(data_path='data', data_type = 'train', save_model_as='models/saved_models/xgboost_model.pkl'):
     """
     First train the model using the best parameters.
     Then save the trained model 
     Additional things which should be done in production: 
     - model versioning
     - save the models in a secure blob storage
-    """
+    """    
     # best_params = search_best_params().to_dict() # for production
     best_params = {
         'n_estimators': 10,
@@ -126,10 +127,16 @@ def train(data_path='data', data_type = 'train', save_model_as='models/saved_mod
         tree_method='hist',   # faster training
         random_state=42
     )
-    model.fit(x, y) #train using the best parameters
-    model.save_model(save_model_as) #save the trained model
     
-def get_trained_model(model_path="models/saved_models/xgboost_model.json"):
-    model = xgb.XGBClassifier()
-    model.load_model(model_path)
+    #train using the best parameters
+    model.fit(x, y) 
+    
+    # save the model
+    pickle.dump(model, open(save_model_as, "wb"))
+    
+def get_trained_model(model_path="models/saved_models/xgboost_model.pkl"):
+    """
+    Load and return the trained model from a specified location
+    """
+    model = pickle.load(open(model_path, "rb"))
     return model
