@@ -50,7 +50,7 @@ def search_best_params(data_path='data', data_type = 'train'):
                     for depth in grid['depth']:
                         model = xgb.XGBClassifier(
                             objective='binary:logistic',
-                            eval_metric='auc',
+                            eval_metric='logloss',
                             n_estimators=n_estimators,
                             max_depth=depth,
                             learning_rate=learning_rate,
@@ -82,6 +82,6 @@ def search_best_params(data_path='data', data_type = 'train'):
     # find the best parameters by auc_score
     metrics_df = pd.DataFrame(metrics)
     best_params = metrics_df.iloc[metrics_df[['test_roc_auc_score']].idxmax()]
-    best_params
-    return metrics, 
+    metrics_df.to_csv('data/metrics/metrics_param_search.csv')
+    best_params.to_csv('data/metrics/best_params.csv')
                         
