@@ -84,4 +84,3 @@ def search_best_params(data_path='data', data_type = 'train'):
     best_params = metrics_df.iloc[metrics_df[['test_roc_auc_score']].idxmax()]
     metrics_df.to_csv('data/metrics/metrics_param_search.csv')
     best_params.to_csv('data/metrics/best_params.csv')
-                        
