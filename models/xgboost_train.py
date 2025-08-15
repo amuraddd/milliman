@@ -84,4 +84,52 @@ def search_best_params(data_path='data', data_type = 'train'):
     best_params = metrics_df.iloc[metrics_df[['test_roc_auc_score']].idxmax()]
     metrics_df.to_csv('data/metrics/metrics_param_search.csv')
     best_params.to_csv('data/metrics/best_params.csv')
-                        
+    return best_params
+    
+def train(data_path='data', data_type = 'train', save_model_as='models/saved_models/xgboost_model.json'):
+    """
+    First train the model using the best parameters.
+    Then save the trained model 
+    Additional things which should be done in production: 
+    - model versioning
+    - save the models in a secure blob storage
+    """
+    # best_params = search_best_params().to_dict() # for production
+    best_params = {
+        'n_estimators': 10,
+        'depth': 10,
+        'learning_rate': 0.1,
+        'subsample': 0.3,
+        'colsample_bytree': 0.3
+    }
+    data_path = Path(data_path)
+    embeddings_file = f'x_{data_type}_nlp_embeddings.csv'
+    embeddings_file_path = data_path/data_type/embeddings_file
+
+    # combine embeddings with other features for modeling
+    embeddings_df = pd.read_csv(embeddings_file_path).drop(columns=['Unnamed: 0'])
+    data_df = get_data_df(data_type='train')
+    data_df = data_df.merge(embeddings_df, on='UniqueID', how='inner')
+    data_df.set_index('UniqueID', inplace=True)
+    data_df.drop(columns=['nlp_feature_vector'], inplace=True)
+
+    x = data_df[data_df.columns[~data_df.columns.isin(['Target'])]]
+    y = data_df['Target']
+    model = xgb.XGBClassifier(
+        objective='binary:logistic',
+        eval_metric='logloss',
+        n_estimators=best_params['n_estimators'],
+        max_depth=best_params['depth'],
+        learning_rate=best_params['learning_rate'],
+        subsample=best_params['subsample'],
+        colsample_bytree=best_params['colsample_bytree'],
+        tree_method='hist',   # faster training
+        random_state=42
+    )
+    model.fit(x, y) #train using the best parameters
+    model.save_model(save_model_as) #save the trained model
+    
+def get_trained_model(model_path="models/saved_models/xgboost_model.json"):
+    model = xgb.XGBClassifier()
+    model.load_model(model_path)
+    return model
