@@ -57,7 +57,8 @@ def generate_embeddings_from_tokens(
     data_df, 
     pad_token_id: int=0,
     model_name: str="answerdotai/ModernBERT-base",
-    embeddings_file_name: str='data/train/x_train_nlp_embeddings.csv'
+    embeddings_file_name: str='data/train/x_train_nlp_embeddings.csv',
+    device: str='cpu'
 ):
     import torch
     import pandas as pd
@@ -70,12 +71,12 @@ def generate_embeddings_from_tokens(
     attention_mask = (padded_tokens != pad_token_id).long()
 
     # Load model (no tokenizer needed since data is already tokenized)
-    model = AutoModel.from_pretrained(model_name)
+    model = AutoModel.from_pretrained(model_name).to(device)
 
     # Get embeddings
     embeddings = []
     for batch, batch_attention_mask in zip(padded_tokens, attention_mask):
-        batch, batch_attention_mask = batch.unsqueeze(dim=0), batch_attention_mask.unsqueeze(dim=0)
+        batch, batch_attention_mask = batch.unsqueeze(dim=0).to(device), batch_attention_mask.unsqueeze(dim=0).to(device)
         with torch.no_grad():
             outputs = model(
                 input_ids=batch, 
@@ -85,7 +86,7 @@ def generate_embeddings_from_tokens(
         token_emb = outputs.last_hidden_state
         #compress dimensions to make an embeddings vector
         _emb = (token_emb * batch_attention_mask.unsqueeze(-1)).sum(1) / batch_attention_mask.sum(1, keepdim=True) 
-        embeddings.append(_emb)
+        embeddings.append(_emb.cpu())
         del outputs, token_emb, _emb #clean up to save memory
 
     #clean up
