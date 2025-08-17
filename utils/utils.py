@@ -96,6 +96,43 @@ def generate_3d_pca_distribution_plot(components, target):
     plt.savefig('figures/3d_pca_distribution_plot.pdf', format="pdf", bbox_inches="tight")
     plt.show()
 
+def generate_pair_plots(data, hue='Target', path='figures/feature_pairplot.pdf'):
+    """
+    Generate a pairplot between features from the data.
+    Input:
+    - data: dataframe containing features and target
+    - hue: to color points based on the target variable
+    - path: path to save the figure
+    """
+    import seaborn as sns
+    import matplotlib.pyplot as plt
+    
+    sns.pairplot(
+        data,
+        hue=hue
+    )
+    plt.savefig(path, format='pdf', bbox_inches='tight')
+    plt.show()
+
+def generate_correlation_plot(df, path='figures/correl_plot.pdf'):
+    """
+    Genearate a correlation plot between features in the data.
+    Input:
+    - df: dataframe containing the features
+    """
+    import seaborn as sns
+    import matplotlib.pyplot as plt
+    
+    #compute correlation
+    corr = df.corr()
+    
+    # Plot correlation heatmap
+    plt.figure(figsize=(8, 6))
+    sns.heatmap(corr, annot=True, cmap="coolwarm", fmt=".2f", linewidths=0.5)
+    plt.title("Feature Correlation Matrix")
+    plt.savefig(path, format='pdf', bbox_inches='tight')
+    plt.show()
+
 def append_dict_to_json(file_path, new_data):
     """Appends a dictionary to a JSON file.
     inputs:

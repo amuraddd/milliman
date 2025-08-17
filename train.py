@@ -1,5 +1,5 @@
 """
-Just a helper file to trigger training
+Just a helper script to trigger training
 """
 import argparse
 from models.xgboost_train_predict import search_best_params

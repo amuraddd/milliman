@@ -123,7 +123,9 @@ def search_best_params(
                             new_data=metrics_current_experiment
                         )
                         metrics.append(metrics_current_experiment) #continue to save them to search over them to find best params
-                        logging.info(f"train accuracy: {accuracy_score(y_train, y_pred_train)} | test accuracy: {accuracy_score(y_test, y_pred)} | test auc: {roc_auc_score(y_test, y_pred)} | depth: {depth} | n_estimators: {n_estimators} | subsamples: {subsample} | learning rate: {learning_rate} | colsample_bytree: {colsample_bytree}")
+                        logging.info(f"train accuracy: {accuracy_score(y_train, y_pred_train)} | \
+                            test accuracy: {accuracy_score(y_test, y_pred)} | test auc: {roc_auc_score(y_test, y_pred)} | \
+                                depth: {depth} | n_estimators: {n_estimators} | subsamples: {subsample} | learning rate: {learning_rate} | colsample_bytree: {colsample_bytree}")
     
     # find the best parameters by auc_score
     metrics_df = pd.DataFrame(metrics)
@@ -133,7 +135,7 @@ def search_best_params(
     if use_scaler:
         best_params_filename="data/metrics/best_params_scaler.json"
     else:
-        best_params_filename="data/metrics/best_params_.json"
+        best_params_filename="data/metrics/best_params.json"
     best_params.to_csv(
         best_params_filename
     )
