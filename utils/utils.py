@@ -96,6 +96,28 @@ def generate_3d_pca_distribution_plot(components, target):
     plt.savefig('figures/3d_pca_distribution_plot.pdf', format="pdf", bbox_inches="tight")
     plt.show()
 
+def append_dict_to_json(file_path, new_data):
+    """Appends a dictionary to a JSON file.
+    inputs:
+    file_path (str): The path to the JSON file.
+    new_data (dict): The dictionary to append.
+    """
+    import json
+    try:
+        with open(file_path, 'r') as file:
+            file_data = json.load(file)
+            if isinstance(file_data, list):
+                file_data.append(new_data)
+            with open(file_path, 'w') as file:
+                json.dump(file_data, file, indent=4)
+    except FileNotFoundError:
+        with open(file_path, 'w') as file:
+            json.dump([new_data], file, indent=4)
+    except json.JSONDecodeError:
+        print(f"Json decode error while writing thought data to file. File path: {file_path}")
+    except ValueError as e:
+        print(f"ValueError: {e}")
+
 def notebook_line_magic():
     """
     Avoid having to restart kernel when working with python scripts

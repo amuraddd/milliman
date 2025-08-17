@@ -3,7 +3,6 @@
 source /home/azm0269@auburn.edu/venv/bin/activate
 cd /home/azm0269@auburn.edu/milliman
 
-python3 -m train > training_log.log 2>&1 
-wait
-
-deactivate
+nohup python3 -u -m train --data_path data --data_type train > training_log.log 2>&1 &
+nohup python3 -u -m train --data_path data --data_type train --use_scalar True > scalar_training_log.log 2>&1 &
+# tail -f training_log.log
