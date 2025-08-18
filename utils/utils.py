@@ -1,6 +1,9 @@
 def plot_class_distribution(target, save_fig=False):
     """
     Plot target distribution given a binary target variable
+    Input:
+    - target (pd.DataFrame or pd.Series): dataframe or pandas series containing target
+    - save_fig (bool): flag to save or not save the figure.
     """
     import seaborn as sns
     import matplotlib.pyplot as plt
@@ -28,6 +31,9 @@ def plot_class_distribution(target, save_fig=False):
 def plot_pca_components_and_variance(mod, save_fig=False):
     """
     Plot explained variance from a PCA decomposition.
+    Inputs:
+    - mod (PCA model): model fitted on data for PCA
+    - save_fig (bool): flag to save or not save the figure.
     """
     import seaborn as sns
     import numpy as np
@@ -50,6 +56,9 @@ def plot_pca_components_and_variance(mod, save_fig=False):
 def generate_2d_pca_distribution_plot(components, target):
     """
     Generate a 2D plot given PCA with 2 components
+    Inputs:
+    - components (np.array): PCA components
+    - target (str): target variable
     """
     import pandas as pd
     import seaborn as sns
@@ -64,7 +73,10 @@ def generate_2d_pca_distribution_plot(components, target):
     
 def generate_3d_pca_distribution_plot(components, target):
     """
-    Generate a 3D plot given PCA with 3 components
+    Generate a 3D plot given PCA with 2 components
+    Inputs:
+    - components (np.array): PCA components
+    - target (str): target variable
     """
     import pandas as pd
     import numpy as np
@@ -100,9 +112,9 @@ def generate_pair_plots(data, hue='Target', path='figures/feature_pairplot.pdf')
     """
     Generate a pairplot between features from the data.
     Input:
-    - data: dataframe containing features and target
-    - hue: to color points based on the target variable
-    - path: path to save the figure
+    - data (pd.DataFrame): dataframe containing features and target
+    - hue (str): to color points based on the target variable
+    - path (str): path to save the figure
     """
     import seaborn as sns
     import matplotlib.pyplot as plt
@@ -118,7 +130,8 @@ def generate_correlation_plot(df, path='figures/correl_plot.pdf'):
     """
     Genearate a correlation plot between features in the data.
     Input:
-    - df: dataframe containing the features
+    - df (pd.DataFrame): dataframe containing the features
+    - path(str): path where the figure will be saved
     """
     import seaborn as sns
     import matplotlib.pyplot as plt
@@ -133,9 +146,32 @@ def generate_correlation_plot(df, path='figures/correl_plot.pdf'):
     plt.savefig(path, format='pdf', bbox_inches='tight')
     plt.show()
 
+def append_dict_to_json(file_path, new_data):
+    """Appends a dictionary to a JSON file.
+    inputs:
+    file_path (str): The path to the JSON file.
+    new_data (dict): The dictionary to append.
+    """
+    import json
+    try:
+        with open(file_path, 'r') as file:
+            file_data = json.load(file)
+            if isinstance(file_data, list):
+                file_data.append(new_data)
+            with open(file_path, 'w') as file:
+                json.dump(file_data, file, indent=4)
+    except FileNotFoundError:
+        with open(file_path, 'w') as file:
+            json.dump([new_data], file, indent=4)
+    except json.JSONDecodeError:
+        print(f"Json decode error while writing thought data to file. File path: {file_path}")
+    except ValueError as e:
+        print(f"ValueError: {e}")
+
 def notebook_line_magic():
     """
-    Avoid having to restart kernel when working with python scripts
+    Avoid having to restart kernel when working with python scripts,
+    Helps when working on ipynb files during experimentation.
     """
     from IPython import get_ipython
     ip = get_ipython()

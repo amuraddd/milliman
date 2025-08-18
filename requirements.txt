@@ -1,0 +1,11 @@
+Flask
+ipython==8.12.3
+matplotlib
+numpy
+pandas==2.3.1
+Requests==2.32.4
+scikit_learn
+seaborn
+torch==2.7.1
+transformers==4.53.1
+xgboost
