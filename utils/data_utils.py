@@ -9,6 +9,13 @@ def get_data_df(
     """
     Combine all provided files in a single dataset.
     Convenient for analysis and modeling downstream
+    Inputs:
+    - data_path (str): path to the data
+    - data_type (str): type - train or val
+    - nlp_columns (list(str)): columns related to the nlp_features
+    
+    Return:
+    -data_df (pd.DataFrame): dataframe containing the combined cleaned data
     """
     # create a path to append to later
     data_path = Path(f'{data_path}/{data_type}')
@@ -37,6 +44,12 @@ def get_padded_tokens(
 ):
     """
     Add padding to the tokens
+    Inputs:
+    - data_df (pd.DataFrame): dataframe containing combined data
+    - pad_token_id (int): int to pad tokens with
+    - feature_name (str): column name of the nlp feature
+    Return:
+    - padded_dataset (torch.Tensor): torch tensor containing padded tokens
     """
     import torch
     from torch.nn.utils.rnn import pad_sequence
@@ -59,6 +72,15 @@ def generate_embeddings_from_tokens(
     model_name: str="answerdotai/ModernBERT-base",
     embeddings_file_name: str='data/train/x_train_nlp_embeddings.csv'
 ):
+    """
+    This function will generate embedding from Bert.
+    In production this should be ran inside the inference pipeline (ideally).
+    Inputs:
+    - data_df (pd.DataFrame): dataframe containing the combined data
+    - pad_token_id (int): int to pad tokens with
+    - model_name (str): name of the bert model from huggingface
+    - embeddings_file_name (str): path where to store embeddings.
+    """
     import torch
     import pandas as pd
     from transformers import AutoModel
