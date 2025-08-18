@@ -207,4 +207,3 @@ __marimo__/
 data/*
 *.pptx
 */.DS_Store
-models/saved_models/*
